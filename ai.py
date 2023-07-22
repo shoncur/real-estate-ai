@@ -1,6 +1,6 @@
 import os
 import openai
-import json
+import csv  # Import the csv module
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,7 +12,7 @@ def process_user_message(user_message):
         messages=[
             {
                 "role": "system",
-                "content": "The user is going to give you the things they look for in a property. You are going to take this input, and display to me the # of bedroom's they want, # of bathroom's they want, the square footage of the property, and the location. Give me all of the fields that they supply, it does not need to be all four."
+                "content": "The user is going to give you the things they look for in a property. You are going to take this input, and display to me the # of bedroom's they want, # of bathroom's they want, the square footage of the property, and the location. Give me all of the fields that they supply, it does not need to be all four. When you give me all of the fields, preface the response with 'Real estate data:'"
             },
             {
                 "role": "user",
@@ -28,8 +28,8 @@ def process_user_message(user_message):
     ai_response = response['choices'][0]['message']['content']
 
     # Check if the AI has given the signal that it received the required data
-    if "Thank you for providing the data." in ai_response:
-        # Save the table data to a JSON file
+    if "Real estate data:" in ai_response:
+        # Save the table data to a CSV file
         table_data = {}
         rows = ai_response.split('\n')
         for row in rows:
@@ -37,8 +37,10 @@ def process_user_message(user_message):
                 key, value = row.split(':', 1)
                 table_data[key.strip()] = value.strip()
 
-        # Save the table data to a JSON file
-        with open('output.json', 'w') as json_file:
-            json.dump(table_data, json_file)
+        # Save the table data to a CSV file
+        with open('output.csv', 'w', newline='') as csv_file:
+            writer = csv.writer(csv_file)
+            for key, value in table_data.items():
+                writer.writerow([key, value])
 
     return ai_response
