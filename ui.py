@@ -36,7 +36,6 @@ class ChatInterface(BoxLayout):
                 counter = 0
                 message = ""
                 for i in textArray:
-                    print(i, counter)
                     if counter == 0:
                         message = "[color=FF0000]HAL:[/color] " + i + " "
                     if counter > 1 and counter > 15:

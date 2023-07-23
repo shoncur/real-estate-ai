@@ -1,5 +1,25 @@
+import os
 import csv
 from base import BASE_URL
+import requests
+from requests.structures import CaseInsensitiveDict
+
+def get_long_lat(location):
+
+    url = "https://api.geoapify.com/v1/geocode/search?text=" + location + "&apiKey=" + os.getenv("GEOLOCATION_API_KEY")
+
+    headers = CaseInsensitiveDict()
+    headers["Accept"] = "application/json"
+
+    resp = requests.get(url, headers=headers)
+
+    print(resp.status_code)
+    print(resp.json())
+
+    theLong = resp.json()['features'][0]['properties']['lon']
+    theLat = resp.json()['features'][0]['properties']['lat']
+
+    return {'long': theLong, 'lat': theLat}
 
 def read_csv_file(file_path):
     data = {}
@@ -35,5 +55,8 @@ def build_search_url(data):
 if __name__ == "__main__":
     csv_file_path = "output.csv"  # Replace with the actual path to your output.csv file
     data = read_csv_file(csv_file_path)
+    res = list(map(str.strip, data.split(',')))
+    location = res.index('Location')
+    long_lat = get_long_lat(res[location + 1])
     search_url = build_search_url(data)
     print("Search URL:", search_url)
