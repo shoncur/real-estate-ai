@@ -1,1 +1,1 @@
-BASE_URL = 'https://www.kijiji.ca/'
+BASE_URL = 'https://www.kijiji.ca/b-real-estate'

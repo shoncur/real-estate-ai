@@ -2,6 +2,7 @@ import os
 import openai
 import csv  # Import the csv module
 from dotenv import load_dotenv
+import subprocess
 
 load_dotenv()
 openai.api_key = os.getenv("API_KEY")
@@ -42,5 +43,17 @@ def process_user_message(user_message):
             writer = csv.writer(csv_file)
             for key, value in table_data.items():
                 writer.writerow([key, value])
+
+        print()
+
+        # Call url_builder.py as a separate process and capture its output
+        result = subprocess.run(["python", "url_builder.py"], capture_output=True, text=True)
+
+        # Get the standard output (stdout) from the subprocess result
+        url_builder_output = result.stdout.strip()
+
+        # Print the output captured from url_builder.py
+        print("Output from url_builder.py:")
+        print(url_builder_output)
 
     return ai_response
