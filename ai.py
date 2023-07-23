@@ -46,10 +46,10 @@ def process_user_message(user_message):
                 writer.writerow([key, value])
 
         # Call url_builder.py as a separate process and capture its output
-        result = subprocess.run(["python", "url_builder.py"], capture_output=True, text=True)
+        result = subprocess.run(["python3", "url_builder.py"], capture_output=False, text=True)
 
-        url_builder_output = result.stdout.strip()
+        #url_builder_output = result.stdout.strip()
 
         # Append the url_builder output to the AI response
-        ai_response += "\n" + url_builder_output
+        #ai_response += "\n" + url_builder_output
     return ai_response
