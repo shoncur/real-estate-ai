@@ -3,6 +3,9 @@ import csv
 from base import BASE_URL
 import requests
 from requests.structures import CaseInsensitiveDict
+import aiohttp
+import asyncio
+
 
 # Sending this to realtor.ca
 default_payload = {
@@ -31,9 +34,6 @@ def get_long_lat(location):
     headers["Accept"] = "application/json"
 
     resp = requests.get(url, headers=headers)
-
-    print(resp.status_code)
-    print(resp.json())
 
     theLong = resp.json()['features'][0]['properties']['lon']
     theLat = resp.json()['features'][0]['properties']['lat']
@@ -76,15 +76,16 @@ def build_search_url(data):
 
     return search_url
 
-def realtor_request():
+async def realtor_request():
     url = BASE_URL
-    data = default_payload
+    data = read_csv_file(csv_file_path)
+    payload = get_long_lat(data['Location'])
 
     headers = {
     'authority': 'api2.realtor.ca',
     'accept': '*/*',
     'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
-    'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    'content-type': 'application/json',
     'origin': 'https://www.realtor.ca',
     'referer': 'https://www.realtor.ca/',
     'sec-ch-ua': '"Not/A)Brand";v="99", "Google Chrome";v="115", "Chromium";v="115"',
@@ -96,20 +97,19 @@ def realtor_request():
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
     }
 
-    response = requests.post(url, json=data, headers=headers)
-
-    if response.status_code == 200:
-        # The request was successful
-        print("Request successful")
-        print("Response:", response)  # Get the response data in JSON format
-    else:
-        print("Request failed")
-        print("Response status code:", response.status_code)
-        print("Response text:", response.text) 
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, data=payload, headers=headers) as response:
+            if response.status == 200:
+                # The request was successful
+                print("Request successful")
+                response_data = await response.json()
+                print("Response:", response_data)  # Get the response data in JSON format
+            else:
+                print("Request failed")
+                print("Response status code:", response.status)
+                response_text = await response.text()
+                print("Response text:", response_text)
 
 if __name__ == "__main__":
     csv_file_path = "output.csv"  # Replace with the actual path to your output.csv file
-    data = read_csv_file(csv_file_path)
-    long_lat = get_long_lat(data['Location'])
-    print(default_payload)
-    realtor_request()
+    asyncio.run(realtor_request())
