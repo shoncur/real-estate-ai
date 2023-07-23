@@ -7,6 +7,26 @@ import subprocess
 load_dotenv()
 openai.api_key = os.getenv("API_KEY")
 
+# Sending this to realtor.ca
+default_payload = {
+    'ZoomLevel': '5',
+    'LatitudeMax': '0',
+    'LongitudeMax': '0',
+    'LatitudeMin': '0',
+    'LongitudeMin': '0',
+    'Sort': '6-D',
+    'PropertyTypeGroupID': '1',
+    'TransactionTypeId': '2',
+    'PropertySearchTypeId': '0',
+    'PriceMin': '1000000',
+    'Currency': 'CAD',
+    'RecordsPerPage': '10',
+    'ApplicationId': '1',
+    'CultureId': '1',
+    'Version': '7.0',
+    'CurrentPage': '1'
+}
+
 def process_user_message(user_message):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -46,7 +66,7 @@ def process_user_message(user_message):
                 writer.writerow([key, value])
 
         # Call url_builder.py as a separate process and capture its output
-        result = subprocess.run(["python3", "url_builder.py"], capture_output=False, text=True)
+        result = subprocess.run(["python", "url_builder.py"], capture_output=False, text=True)
 
         #url_builder_output = result.stdout.strip()
 
