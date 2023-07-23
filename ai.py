@@ -36,6 +36,7 @@ def process_user_message(user_message):
         for row in rows:
             if ':' in row:
                 key, value = row.split(':', 1)
+                key = key.strip().replace('-', '')
                 table_data[key.strip()] = value.strip()
 
         # Save the table data to a CSV file
