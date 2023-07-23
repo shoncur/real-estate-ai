@@ -1,1 +1,1 @@
-BASE_URL = 'https://www.realtor.ca/map/'
+BASE_URL = 'https://www.realtor.ca/map#'

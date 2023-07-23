@@ -2,30 +2,13 @@ import os
 import openai
 import csv  # Import the csv module
 from dotenv import load_dotenv
+from url_builder import build_search_url
+from url_builder import get_long_lat
+from url_builder import default_payload
 import subprocess
 
 load_dotenv()
 openai.api_key = os.getenv("API_KEY")
-
-# Sending this to realtor.ca
-default_payload = {
-    'ZoomLevel': '5',
-    'LatitudeMax': '0',
-    'LongitudeMax': '0',
-    'LatitudeMin': '0',
-    'LongitudeMin': '0',
-    'Sort': '6-D',
-    'PropertyTypeGroupID': '1',
-    'TransactionTypeId': '2',
-    'PropertySearchTypeId': '0',
-    'PriceMin': '1000000',
-    'Currency': 'CAD',
-    'RecordsPerPage': '10',
-    'ApplicationId': '1',
-    'CultureId': '1',
-    'Version': '7.0',
-    'CurrentPage': '1'
-}
 
 def process_user_message(user_message):
     response = openai.ChatCompletion.create(
@@ -64,6 +47,10 @@ def process_user_message(user_message):
             writer = csv.writer(csv_file)
             for key, value in table_data.items():
                 writer.writerow([key, value])
+
+        #updated_payload = get_long_lat(table_data.get('Location', ''), default_payload)
+
+        #realtor_url = build_search_url(updated_payload)
 
         # Call url_builder.py as a separate process and capture its output
         result = subprocess.run(["python", "url_builder.py"], capture_output=False, text=True)
