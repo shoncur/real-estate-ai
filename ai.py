@@ -1,35 +1,36 @@
 import os
 import openai
-import csv  # Import the csv module
+import csv
+import json
 from dotenv import load_dotenv
 from url_builder import build_search_url
 from url_builder import get_long_lat
 from url_builder import default_payload
 import subprocess
+from test_json_info import info
 
 load_dotenv()
 openai.api_key = os.getenv("API_KEY")
 
-def process_housing_list(housing_list):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are going to receive an object with a list of houses in a certain area. You are going to summarize each house, with a short description, including the address and postal code."
-            },
-            {
-                "role": "user",
-                "content": housing_list
-            }
-        ],
-        temperature=0,
-        max_tokens=256,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
-    )
-    ai_response = response['choices'][0]['message']['content']
+def filter_housing_list(json_dump):
+    data = json.loads(json_dump)
+
+    filtered_properties = []
+    for result in data.get("Results", []):
+        property_info = {
+            "Bedrooms": result["Building"].get("Bedrooms", ""),
+            "Bathrooms": result["Building"].get("BathroomTotal", ""),
+            "SizeInterior": result["Building"].get("SizeInterior", ""),
+            "PublicRemarks": result.get("PublicRemarks", "")
+        }
+        filtered_properties.append(property_info)
+
+    for property_info in filtered_properties:
+        print("Bedrooms:", property_info["Bedrooms"])
+        print("Bathrooms:", property_info["Bathrooms"])
+        print("SizeInterior:", property_info["SizeInterior"])
+        print("PublicRemarks:", property_info["PublicRemarks"])
+        print("-" * 30)
 
 def process_user_message(user_message):
     response = openai.ChatCompletion.create(
@@ -77,6 +78,8 @@ def process_user_message(user_message):
         result = subprocess.run(["python", "url_builder.py"], capture_output=False, text=True)
 
         print(default_payload)
+
+        #filter_housing_list(info)
 
         #url_builder_output = result.stdout.strip()
 
