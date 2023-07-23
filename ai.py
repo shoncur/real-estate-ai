@@ -44,8 +44,6 @@ def process_user_message(user_message):
             for key, value in table_data.items():
                 writer.writerow([key, value])
 
-        print()
-
         # Call url_builder.py as a separate process and capture its output
         result = subprocess.run(["python", "url_builder.py"], capture_output=True, text=True)
 
