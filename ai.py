@@ -10,6 +10,27 @@ import subprocess
 load_dotenv()
 openai.api_key = os.getenv("API_KEY")
 
+def process_housing_list(housing_list):
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are going to receive an object with a list of houses in a certain area. You are going to summarize each house, with a short description, including the address and postal code."
+            },
+            {
+                "role": "user",
+                "content": housing_list
+            }
+        ],
+        temperature=0,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    ai_response = response['choices'][0]['message']['content']
+
 def process_user_message(user_message):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -54,6 +75,8 @@ def process_user_message(user_message):
 
         # Call url_builder.py as a separate process and capture its output
         result = subprocess.run(["python", "url_builder.py"], capture_output=False, text=True)
+
+        print(default_payload)
 
         #url_builder_output = result.stdout.strip()
 

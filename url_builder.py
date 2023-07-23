@@ -101,7 +101,7 @@ def realtor_request():
     if response.status_code == 200:
         # The request was successful
         print("Request successful")
-        print("Response:", response.json())  # Get the response data in JSON format
+        print("Response:", response)  # Get the response data in JSON format
     else:
         print("Request failed")
         print("Response status code:", response.status_code)
@@ -112,3 +112,4 @@ if __name__ == "__main__":
     data = read_csv_file(csv_file_path)
     long_lat = get_long_lat(data['Location'])
     print(default_payload)
+    realtor_request()
