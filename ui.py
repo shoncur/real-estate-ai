@@ -40,14 +40,6 @@ class ChatInterface(BoxLayout):
     def update_chat_label(self):
         self.chat_label.text = "\n\n".join(self.messages)
 
-class ChatApp(App):
-    def build(self):
-        return ChatInterface()
-
-if __name__ == '__main__':
-    ChatApp().run()
-
-
     def send_user_message(self, instance):
         user_message = self.user_input.text.strip()
         if user_message:
@@ -61,11 +53,12 @@ if __name__ == '__main__':
             self.ai_response_label.text = f"{user_message_history}\n\nAI:\n{ai_response}"
             self.user_input.text = ''
 
-if __name__ == '__main__':
-    class ChatApp(App):
-        def build(self):
-            return ChatUI()
+            
+class ChatApp(App):
+    def build(self):
+        return ChatInterface()
 
+if __name__ == '__main__':
     ChatApp().run()
 
 
