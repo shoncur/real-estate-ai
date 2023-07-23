@@ -1,1 +1,1 @@
-BASE_URL = 'https://www.realtor.ca/map#'
+BASE_URL = 'https://api2.realtor.ca/Listing.svc/PropertySearch_Post'

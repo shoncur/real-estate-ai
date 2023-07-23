@@ -5,6 +5,7 @@ import requests
 from requests.structures import CaseInsensitiveDict
 import aiohttp
 import asyncio
+import json
 
 
 # Sending this to realtor.ca
@@ -38,10 +39,10 @@ def get_long_lat(location):
     theLong = resp.json()['features'][0]['properties']['lon']
     theLat = resp.json()['features'][0]['properties']['lat']
 
-    default_payload['LatitudeMax'] = int(theLat) + 0.01
-    default_payload['LatitudeMin'] = int(theLat) - 0.01
-    default_payload['LongitudeMax'] = int(theLong) + 0.01
-    default_payload['LongitudeMin'] = int(theLong) - 0.01
+    default_payload['LatitudeMax'] = int(theLat) + 0.2
+    default_payload['LatitudeMin'] = int(theLat) - 0.2
+    default_payload['LongitudeMax'] = int(theLong) + 0.2
+    default_payload['LongitudeMin'] = int(theLong) - 0.2
 
     return default_payload
 
@@ -85,7 +86,8 @@ async def realtor_request():
     'authority': 'api2.realtor.ca',
     'accept': '*/*',
     'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
-    'content-type': 'application/json',
+    'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    'cookie': 'visid_incap_2269415=cM6CqGZKTkm5MJLmj7P7M0NUvWQAAAAAQUIPAAAAAADPZhsMQaZ7Ruc+dXg8rDgc; nlbi_2269415=7nBaQOv+Hg0/4JEqZ/XrMgAAAAATXPlX632g1G8IQIaGeTts; incap_ses_8078_2269415=ZqPoAV5eEVqcsugF99IacENUvWQAAAAANUl5dczSLu61HOdRbBpH9g==; nlbi_2269415_2147483392=f66ZdYRYGBWLhJNJZ/XrMgAAAAC0h/M0BSkVdIEilUcqVQBZ; reese84=3:/uPPEmA7bgT2xFJIG6VW6Q==:gkhsxvECgzDM9Qf76i+NINgBcolLHsbFNP69qGdY+FOm3rkhLya+2bLdMvt/C5WAaGgASUkQ+yxWK4i2TlY+bInZaNTeGRWksTGKHjR0s3Ac+sHNxF9vwW3MRjeS3hAMt81jtKdiJjJLD85VTAHpKhHMDTYl2UOlNKeEdCmd4gmEvezKlhVsOcAE+2XRJEsf9vhBqGuEtHbiKrE1lS6g+rScaHb0wvjLXMCXlD/xkGnndOyyKjJVMEH51MMDQiOP1mab38ZCvpgeFpU+ymSU6JXH2l8vCUaxuJob9qJm47TNQv1HLZ+ydDSDc95FanTr0Ba3Q1k2MPNDgMK6Owhju5Ps1vU0rovvTSTnS+16/Qi7syozVHuZqlGvoX+GL9DE81UQlYLw4c9/ZsmP949d01lhmGCP7BRBmDJWHNNivb2M4Izk2/Kl0xwYMXJwtXhYO1rVGGbKvBD7Obvu6xXSsQ==:Ha29iZXbUcTvxgm/xy2eW8NKEV6SoE2n5TGcyYJapDE=; gig_bootstrap_3_mrQiIl6ov44s2X3j6NGWVZ9SDDtplqV7WgdcyEpGYnYxl7ygDWPQHqQqtpSiUfko=gigya-pr_ver4; ASP.NET_SessionId=4dk4yrekigcqxsxo2jn4ia2x; visid_incap_2271082=vnxzynlTTN+y2tPQOC8E+V1UvWQAAAAAQUIPAAAAAAA5VRlgXPK2L55jaYEZNa0g; nlbi_2271082=3sQkDJAz5A+zFB6pVPrQ3QAAAAAeDobWuSuE1lwl3tijX615; incap_ses_8078_2271082=/i0kW3n2ZRvZ7egF99IacF1UvWQAAAAA3UXJZhqvMRKxzXbCJ64rGg==',
     'origin': 'https://www.realtor.ca',
     'referer': 'https://www.realtor.ca/',
     'sec-ch-ua': '"Not/A)Brand";v="99", "Google Chrome";v="115", "Chromium";v="115"',
@@ -102,8 +104,7 @@ async def realtor_request():
             if response.status == 200:
                 # The request was successful
                 print("Request successful")
-                response_data = await response.json()
-                print("Response:", response_data)  # Get the response data in JSON format
+                response_data = await response.text()
             else:
                 print("Request failed")
                 print("Response status code:", response.status)
