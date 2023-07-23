@@ -40,20 +40,7 @@ class ChatInterface(BoxLayout):
     def update_chat_label(self):
         self.chat_label.text = "\n\n".join(self.messages)
 
-    def send_user_message(self, instance):
-        user_message = self.user_input.text.strip()
-        if user_message:
-            self.previousChat.append(user_message)
-            # Call the function from the AI file to process the user's message and get AI response
-            ai_response = process_user_message(user_message)
-            self.ai_response_label.text = ai_response
 
-            # Display user message history above AI response
-            user_message_history = f"You:\n".join(self.previousChat)
-            self.ai_response_label.text = f"{user_message_history}\n\nAI:\n{ai_response}"
-            self.user_input.text = ''
-
-            
 class ChatApp(App):
     def build(self):
         return ChatInterface()
