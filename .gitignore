@@ -32,4 +32,4 @@ env/
 .DS_Store
 Thumbs.db
 
-output.csv
+*.csv
